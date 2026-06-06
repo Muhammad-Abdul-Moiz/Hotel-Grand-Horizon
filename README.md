@@ -1,5 +1,5 @@
 ================================================================================
-         HOTEL ROOM BOOKING AND BILLING SYSTEM — Grand Horizon PMS
+         HOTEL ROOM BOOKING AND BILLING SYSTEM — Grand Horizon
 ================================================================================
 
 A professional, enterprise-grade Hotel Property Management System (PMS)
