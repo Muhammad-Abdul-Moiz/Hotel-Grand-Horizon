@@ -3,7 +3,7 @@ import pymysql
 DB_CONFIG = {
     'host': 'localhost',
     'user': 'root',
-    'password': 'moiz@123'
+    'password': 'your-password'
 }
 
 def init_db():
