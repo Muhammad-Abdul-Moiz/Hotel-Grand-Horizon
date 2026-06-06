@@ -1,6 +1,5 @@
-================================================================================
-         HOTEL ROOM BOOKING AND BILLING SYSTEM — Grand Horizon PMS
-================================================================================
+HOTEL ROOM BOOKING AND BILLING SYSTEM — Grand Horizon
+
 
 A professional, enterprise-grade Hotel Property Management System (PMS)
 dashboard built with a Python (Flask) backend, MySQL database, and a clean
