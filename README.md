@@ -1,120 +1,96 @@
-================================================================================
-         HOTEL ROOM BOOKING AND BILLING SYSTEM — Grand Horizon
-================================================================================
+# Hotel Management System
 
-A professional, enterprise-grade Hotel Property Management System (PMS)
-dashboard built with a Python (Flask) backend, MySQL database, and a clean
-SaaS UI frontend.
+A full-stack Hotel Management System built with **Python Flask**, **MySQL**, and **JavaScript**. Manage rooms, bookings, billing, and housekeeping from a single clean dashboard.
 
-The system leverages 7 advanced MySQL database triggers to handle stay pricing,
-taxes, service additions, guest check-ins, check-outs, and housekeeping task
-lifecycles entirely at the database layer.
+The system uses **7 MySQL database triggers** to automate billing calculations, room status transitions, and housekeeping scheduling entirely at the database layer.
 
---------------------------------------------------------------------------------
-REPOSITORY STRUCTURE
---------------------------------------------------------------------------------
+---
 
-DB/
+## Repository Structure
+
+```
 ├── hotel_app/
-│   ├── app.py              Flask Backend API Server
-│   ├── init_db.py          MySQL Database Initialization & Seeding Script
+│   ├── app.py              # Flask Backend API Server
+│   ├── init_db.py          # MySQL Database Initialization & Seeding Script
 │   ├── templates/
-│   │   └── index.html      Dashboard HTML Structure
+│   │   └── index.html      # Dashboard HTML Structure
 │   └── static/
-│       ├── style.css       Clean light-themed SaaS CSS Stylesheet
-│       └── script.js       Frontend Event Handling & API Bindings
-└── hotel_schema.sql        Standalone MySQL Database Schema & Triggers
-           
---------------------------------------------------------------------------------
-CORE FEATURES
---------------------------------------------------------------------------------
+│       ├── style.css       # Clean light-themed SaaS CSS Stylesheet
+│       └── script.js       # Frontend Event Handling & API Bindings
+└── hotel_schema.sql        # Standalone MySQL Database Schema & Triggers
 
-1. Dashboard Room Grid
-   Real-time room status monitoring (Available, Occupied, Cleaning,
-   Maintenance) with action buttons and filter tabs.
+```
 
-2. Reservations Directory
-   Create guest bookings (Confirmed reservations or immediate Checked-In
-   stays). Process Check-ins or Check-outs directly from the table list.
+---
 
-3. Housekeeping Queue
-   Monitor rooms needing cleaning, assign tasks to staff, and mark
-   cleaning tasks as completed.
+## Tech Stack
 
-4. Itemized Billing Modal
-   View itemized invoices showing room rate charges multiplied by stay
-   duration, taxes, and timestamps of ordered amenities, with quick pay
-   processing.
+- **Frontend:** HTML5, CSS3, JavaScript (ES6)
+- **Backend:** Python, Flask, PyMySQL
+- **Database:** MySQL
 
---------------------------------------------------------------------------------
-MYSQL DATABASE TRIGGERS
---------------------------------------------------------------------------------
+---
 
-The system relies on 7 database-level automation triggers:
+## Core Features
 
-  trg_create_billing_after_booking   (AFTER INSERT ON Bookings)
-    Auto-creates a new Billing invoice and computes room charges
-    (nights x price_per_night), guaranteeing a minimum of 1 night.
+1. **Dashboard Room Grid** — Real-time room status monitoring (Available, Occupied, Cleaning, Maintenance) with action buttons and filter tabs.
+2. **Reservations Directory** — Create guest bookings (Confirmed reservations or immediate Checked-In stays). Process check-ins and check-outs directly from the table.
+3. **Housekeeping Queue** — Monitor rooms needing cleaning, assign tasks to staff, and mark tasks as completed.
+4. **Itemized Billing** — View invoices showing room charges, ordered services, taxes, and grand totals with one-click payment processing.
 
-  trg_update_billing_after_service   (AFTER INSERT ON BookingServices)
-    Increments the invoice's service subtotal and grand total dynamically
-    when a service is ordered.
+---
 
-  trg_booking_insert_room_occupied   (AFTER INSERT ON Bookings)
-    Sets a room's status to Occupied when a new booking is created with
-    an immediate check-in.
+## MySQL Database Triggers
 
-  trg_checkin_room_occupied          (AFTER UPDATE ON Bookings)
-    Updates a room to Occupied when a confirmed reservation checks in.
+| Trigger | Event | Action |
+|---|---|---|
+| `trg_create_billing_after_booking` | AFTER INSERT ON Bookings | Auto-creates invoice and computes room charges + 10% tax |
+| `trg_update_billing_after_service` | AFTER INSERT ON BookingServices | Increments service charges and grand total on invoice |
+| `trg_booking_insert_room_occupied` | AFTER INSERT ON Bookings | Sets room to Occupied on immediate walk-in check-in |
+| `trg_checkin_room_occupied` | AFTER UPDATE ON Bookings | Sets room to Occupied when confirmed booking checks in |
+| `trg_checkout_room_cleaning` | AFTER UPDATE ON Bookings | Sets room to Cleaning on guest checkout |
+| `trg_room_cleaning_started` | AFTER UPDATE ON Rooms | Logs a new Pending housekeeping task when room enters Cleaning |
+| `trg_housekeeping_completed` | AFTER UPDATE ON HousekeepingLog | Resets room to Available when cleaning is marked Completed |
 
-  trg_checkout_room_cleaning         (AFTER UPDATE ON Bookings)
-    Sets a room to Cleaning when booking status changes to Checked-Out.
+---
 
-  trg_room_cleaning_started          (AFTER UPDATE ON Rooms)
-    Automatically logs a new housekeeping task (status Pending) when a
-    room status transitions to Cleaning.
+## Setup & Installation
 
-  trg_housekeeping_completed         (AFTER UPDATE ON HousekeepingLog)
-    Automatically resets a room status to Available when the corresponding
-    housekeeping task is marked Completed.
+### 1. Prerequisites
 
---------------------------------------------------------------------------------
-LOCAL INSTALLATION & SETUP
---------------------------------------------------------------------------------
+Make sure you have **Python 3.x** and a running **MySQL server** installed, then install the required packages:
 
-STEP 1 — Prerequisites
+```bash
+pip install flask pymysql
+```
 
-  Ensure you have Python 3.x and a running MySQL server installed.
-  Install the required Python packages:
+### 2. Configure Database Credentials
 
-    pip install flask pymysql
+Open `hotel_app/app.py` and `hotel_app/init_db.py` and update the `DB_CONFIG` with your MySQL credentials:
 
-STEP 2 — Configure Database Credentials
+```python
+DB_CONFIG = {
+    'host': 'localhost',
+    'user': 'root',
+    'password': 'your_mysql_password',
+    'database': 'hotel_db'
+}
+```
 
-  Open hotel_app/app.py and hotel_app/init_db.py and update the DB_CONFIG
-  dictionary at the top to match your MySQL server configuration:
+### 3. Initialize the Database
 
-    DB_CONFIG = {
-        'host':     'localhost',
-        'user':     'root',
-        'password': 'your_mysql_password',
-        'database': 'hotel_db'
-    }
+Run the initialization script to create the database, tables, triggers, and seed data:
 
-STEP 3 — Initialize the Database
+```bash
+cd hotel_app
+python init_db.py
+```
 
-  Run the database initialization script to create the hotel_db database,
-  establish all tables and triggers, and populate seed data:
+### 4. Run the Application
 
-    cd hotel_app
-    python init_db.py
+```bash
+python app.py
+```
 
-STEP 4 — Run the Web Application
+Visit **http://127.0.0.1:5050** in your browser.
 
-  Start the Flask development server:
-
-    python app.py
-
-  Open your browser and visit:  http://127.0.0.1:5050
-
-================================================================================
