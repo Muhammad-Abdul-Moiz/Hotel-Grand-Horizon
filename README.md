@@ -1,12 +1,13 @@
-HOTEL ROOM BOOKING AND BILLING SYSTEM — Grand Horizon
-
+================================================================================
+         HOTEL ROOM BOOKING AND BILLING SYSTEM — Grand Horizon PMS
+================================================================================
 
 A professional, enterprise-grade Hotel Property Management System (PMS)
 dashboard built with a Python (Flask) backend, MySQL database, and a clean
 SaaS UI frontend.
 
 The system leverages 7 advanced MySQL database triggers to handle stay pricing,
-taxes, service additions, guest check-ins, check-outs and housekeeping task
+taxes, service additions, guest check-ins, check-outs, and housekeeping task
 lifecycles entirely at the database layer.
 
 --------------------------------------------------------------------------------
@@ -23,8 +24,7 @@ DB/
 │       ├── style.css       Clean light-themed SaaS CSS Stylesheet
 │       └── script.js       Frontend Event Handling & API Bindings
 └── hotel_schema.sql        Standalone MySQL Database Schema & Triggers
-
-
+           
 --------------------------------------------------------------------------------
 CORE FEATURES
 --------------------------------------------------------------------------------
