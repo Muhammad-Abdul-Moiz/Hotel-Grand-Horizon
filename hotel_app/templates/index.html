@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grand Horizon Hotel Management Dashboard</title>
+    <!-- Outfit & Inter Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">
+                <i class="fa-solid fa-hotel"></i>
+                <h2>Grand<span>Horizon</span></h2>
+            </div>
+            <ul class="nav-links">
+                <li class="active">
+                    <a href="#" id="nav-dashboard">
+                        <i class="fa-solid fa-gauge"></i> Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="#" id="nav-bookings">
+                        <i class="fa-regular fa-calendar-check"></i> Bookings
+                    </a>
+                </li>
+                <li>
+                    <a href="#" id="nav-housekeeping">
+                        <i class="fa-solid fa-broom"></i> Housekeeping
+                    </a>
+                </li>
+                <li>
+                    <a href="#" id="nav-billing">
+                        <i class="fa-solid fa-file-invoice-dollar"></i> Billing
+                    </a>
+                </li>
+            </ul>
+            <div class="sidebar-footer">
+                <p>System Powered by MySQL</p>
+                <div class="db-status">
+                    <span class="status-dot online"></span> Database Connected
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header>
+                <div class="header-title">
+                    <h1 id="view-title">Dashboard Overview</h1>
+                    <p id="view-desc">Monitor real-time room occupancy, housekeeping tasks, and invoicing.</p>
+                </div>
+                <div class="header-profile">
+                    <div class="profile-info">
+                        <span class="profile-name">Abdul Moiz</span>
+                        <span class="profile-role">Hotel Administrator</span>
+                    </div>
+                    <div class="profile-avatar">AM</div>
+                </div>
+            </header>
+
+            <!-- Dashboard / Rooms View -->
+            <section id="view-dashboard" class="view active">
+                <!-- Statistics Section -->
+                <div class="stats-row">
+                    <div class="stat-card total">
+                        <div class="stat-icon"><i class="fa-solid fa-door-open"></i></div>
+                        <div class="stat-details">
+                            <h3>Total Rooms</h3>
+                            <p id="stat-total">--</p>
+                        </div>
+                    </div>
+                    <div class="stat-card available">
+                        <div class="stat-icon"><i class="fa-solid fa-check-circle"></i></div>
+                        <div class="stat-details">
+                            <h3>Available Rooms</h3>
+                            <p id="stat-available">--</p>
+                        </div>
+                    </div>
+                    <div class="stat-card occupied">
+                        <div class="stat-icon"><i class="fa-solid fa-user-tag"></i></div>
+                        <div class="stat-details">
+                            <h3>Occupied Rooms</h3>
+                            <p id="stat-occupied">--</p>
+                        </div>
+                    </div>
+                    <div class="stat-card cleaning">
+                        <div class="stat-icon"><i class="fa-solid fa-soap"></i></div>
+                        <div class="stat-details">
+                            <h3>Needs Cleaning</h3>
+                            <p id="stat-cleaning">--</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Room Grid Header with Filtering -->
+                <div class="section-header">
+                    <div class="filters-container">
+                        <h2>Room Availability Grid</h2>
+                        <div class="filter-bar">
+                            <button class="btn-filter active" data-filter="all">All Rooms</button>
+                            <button class="btn-filter" data-filter="Available">Available</button>
+                            <button class="btn-filter" data-filter="Occupied">Occupied</button>
+                            <button class="btn-filter" data-filter="Cleaning">Cleaning</button>
+                            <button class="btn-filter" data-filter="Maintenance">Maintenance</button>
+                        </div>
+                    </div>
+                    <button class="btn-primary" id="btn-new-booking">
+                        <i class="fa-solid fa-plus"></i> New Booking
+                    </button>
+                </div>
+                
+                <div class="room-grid" id="room-grid">
+                    <div class="loading"><i class="fa-solid fa-circle-notch fa-spin"></i> Loading rooms...</div>
+                </div>
+            </section>
+
+            <!-- Bookings View -->
+            <section id="view-bookings" class="view">
+                <div class="section-header">
+                    <h2>Reservation Directory</h2>
+                    <button class="btn-primary" id="btn-new-booking-alt">
+                        <i class="fa-solid fa-plus"></i> Create Reservation
+                    </button>
+                </div>
+                <div class="table-container">
+                    <table class="data-table" id="bookings-table">
+                        <thead>
+                            <tr>
+                                <th>Booking ID</th>
+                                <th>Guest Name</th>
+                                <th>Room</th>
+                                <th>Check In</th>
+                                <th>Check Out</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Housekeeping View -->
+            <section id="view-housekeeping" class="view">
+                <div class="section-header">
+                    <h2>Cleaning & Maintenance Queue</h2>
+                </div>
+                <div class="table-container">
+                    <table class="data-table" id="housekeeping-table">
+                        <thead>
+                            <tr>
+                                <th>Log ID</th>
+                                <th>Room Number</th>
+                                <th>Room Type</th>
+                                <th>Cleaning Status</th>
+                                <th>Assigned Cleaner</th>
+                                <th>Start Time</th>
+                                <th>End Time</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Billing View -->
+            <section id="view-billing" class="view">
+                <div class="section-header">
+                    <h2>Billing & Invoices</h2>
+                </div>
+                <div class="table-container">
+                    <table class="data-table" id="billing-table">
+                        <thead>
+                            <tr>
+                                <th>Bill ID</th>
+                                <th>Booking ID</th>
+                                <th>Guest Name</th>
+                                <th>Room Charges</th>
+                                <th>Service Charges</th>
+                                <th>Tax</th>
+                                <th>Total Amount</th>
+                                <th>Payment Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Add Service Modal -->
+            <div class="modal-overlay" id="service-modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>Order Amenity / Room Service</h2>
+                        <button type="button" class="btn-close" id="btn-close-service-modal">&times;</button>
+                    </div>
+                    <form id="service-form">
+                        <input type="hidden" id="service-booking-id">
+                        <div class="form-group">
+                            <label for="service-select">Select Service</label>
+                            <select id="service-select" required>
+                                <option value="">Loading services...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="service-quantity">Quantity</label>
+                            <input type="number" id="service-quantity" min="1" max="10" value="1" required>
+                        </div>
+                        <div class="modal-actions">
+                            <button type="button" class="btn-secondary" id="btn-cancel-service">Cancel</button>
+                            <button type="submit" class="btn-primary">Add to Bill</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Booking Modal -->
+            <div class="modal-overlay" id="booking-modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>Create New Booking</h2>
+                        <button type="button" class="btn-close" id="btn-close-booking-modal">&times;</button>
+                    </div>
+                    <form id="booking-form">
+                        <div class="form-row">
+                            <div class="form-group col">
+                                <label for="guest-first-name">First Name</label>
+                                <input type="text" id="guest-first-name" required placeholder="e.g. John">
+                            </div>
+                            <div class="form-group col">
+                                <label for="guest-last-name">Last Name</label>
+                                <input type="text" id="guest-last-name" required placeholder="e.g. Doe">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col">
+                                <label for="guest-email">Email Address</label>
+                                <input type="email" id="guest-email" required placeholder="john.doe@example.com">
+                            </div>
+                            <div class="form-group col">
+                                <label for="guest-phone">Phone Number</label>
+                                <input type="text" id="guest-phone" placeholder="e.g. +923001234567">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="guest-address">Postal Address</label>
+                            <input type="text" id="guest-address" placeholder="Street Address, City">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col">
+                                <label for="check-in-date">Check-in Date</label>
+                                <input type="date" id="check-in-date" required>
+                            </div>
+                            <div class="form-group col">
+                                <label for="check-out-date">Check-out Date</label>
+                                <input type="date" id="check-out-date" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col">
+                                <label for="room-select">Room Selection</label>
+                                <select id="room-select" required>
+                                    <option value="">Select an available room...</option>
+                                </select>
+                            </div>
+                            <div class="form-group col">
+                                <label for="booking-status-select">Immediate Status</label>
+                                <select id="booking-status-select" required>
+                                    <option value="Confirmed">Confirmed (Reservation)</option>
+                                    <option value="Checked-In">Checked-In (Immediate Stay)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-actions">
+                            <button type="button" class="btn-secondary" id="btn-cancel-booking">Cancel</button>
+                            <button type="submit" class="btn-primary">Confirm Booking</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Detailed Invoice Modal -->
+            <div class="modal-overlay" id="invoice-modal">
+                <div class="modal-content invoice-content">
+                    <div class="modal-header">
+                        <h2>Hotel Guest Invoice</h2>
+                        <button type="button" class="btn-close" id="btn-close-invoice-modal">&times;</button>
+                    </div>
+                    <div class="invoice-body">
+                        <!-- Invoice Header Info -->
+                        <div class="invoice-meta-row">
+                            <div class="invoice-col">
+                                <span class="label">Invoice Number</span>
+                                <span class="value" id="invoice-bill-id">#BILL-100</span>
+                            </div>
+                            <div class="invoice-col">
+                                <span class="label">Booking ID</span>
+                                <span class="value" id="invoice-booking-id">#BOOK-101</span>
+                            </div>
+                            <div class="invoice-col">
+                                <span class="label">Payment Status</span>
+                                <span class="invoice-badge" id="invoice-payment-status">Pending</span>
+                            </div>
+                        </div>
+
+                        <div class="invoice-details-grid">
+                            <!-- Guest Details -->
+                            <div class="detail-block">
+                                <h3>Guest Information</h3>
+                                <p><strong id="invoice-guest-name">John Doe</strong></p>
+                                <p id="invoice-guest-email">john.doe@example.com</p>
+                                <p id="invoice-guest-phone">+923001234567</p>
+                                <p id="invoice-guest-address" class="address-text">12-A Street, Lahore</p>
+                            </div>
+                            <!-- Stay Details -->
+                            <div class="detail-block">
+                                <h3>Reservation Details</h3>
+                                <p><strong>Room:</strong> <span id="invoice-room-info">Room 201 - Suite</span></p>
+                                <p><strong>Rate:</strong> PKR <span id="invoice-room-rate">15,000.00</span> / night</p>
+                                <p><strong>Check-in:</strong> <span id="invoice-checkin">2026-05-21</span></p>
+                                <p><strong>Check-out:</strong> <span id="invoice-checkout">2026-05-26</span></p>
+                                <p><strong>Duration:</strong> <span id="invoice-duration">5 Nights</span></p>
+                            </div>
+                        </div>
+
+                        <!-- Itemized Table -->
+                        <div class="invoice-items-container">
+                            <h3>Itemized Account Statement</h3>
+                            <table class="invoice-items-table">
+                                <thead>
+                                    <tr>
+                                        <th>Description</th>
+                                        <th class="text-center">Rate (PKR)</th>
+                                        <th class="text-center">Qty / Nights</th>
+                                        <th class="text-right">Total Amount (PKR)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="invoice-items-body">
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Billing Summary -->
+                        <div class="invoice-summary-block">
+                            <div class="summary-line">
+                                <span>Room Charges Subtotal:</span>
+                                <span id="invoice-room-subtotal">PKR 0.00</span>
+                            </div>
+                            <div class="summary-line">
+                                <span>Service Charges Subtotal:</span>
+                                <span id="invoice-services-subtotal">PKR 0.00</span>
+                            </div>
+                            <div class="summary-line">
+                                <span>Service Tax (10% on Room):</span>
+                                <span id="invoice-tax-amount">PKR 0.00</span>
+                            </div>
+                            <div class="summary-line grand-total">
+                                <span>Grand Total:</span>
+                                <span id="invoice-grand-total">PKR 0.00</span>
+                            </div>
+                            <div class="summary-line paid-date" id="invoice-paid-date-row" style="display: none;">
+                                <span>Payment Date:</span>
+                                <span id="invoice-paid-date">--</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn-secondary" id="btn-close-invoice">Close</button>
+                        <button type="button" class="btn-primary" id="btn-pay-invoice">
+                            <i class="fa-solid fa-credit-card"></i> Pay Invoice
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Start Housekeeping Modal -->
+            <div class="modal-overlay" id="housekeeping-modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>Assign & Start Cleaning</h2>
+                        <button type="button" class="btn-close" id="btn-close-housekeeping-modal">&times;</button>
+                    </div>
+                    <form id="housekeeping-form">
+                        <input type="hidden" id="housekeeping-log-id">
+                        <div class="form-group">
+                            <label for="cleaner-name">Housekeeper Name</label>
+                            <input type="text" id="cleaner-name" placeholder="Enter staff name..." required>
+                        </div>
+                        <div class="modal-actions">
+                            <button type="button" class="btn-secondary" id="btn-cancel-housekeeping">Cancel</button>
+                            <button type="submit" class="btn-primary">Start Task</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
